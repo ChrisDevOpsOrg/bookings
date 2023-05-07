@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"github.com/ChrisDevOpsOrg/bookings/internal/config"
+	"github.com/ChrisDevOpsOrg/bookings/internal/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,7 +17,7 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 	var err error
 
@@ -38,7 +39,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	err = t.Execute(buf, nil)
+	err = t.Execute(buf, td)
 	if err != nil {
 		log.Fatal(err)
 	}

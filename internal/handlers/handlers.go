@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/ChrisDevOpsOrg/bookings/internal/config"
+	"github.com/ChrisDevOpsOrg/bookings/internal/models"
 	"github.com/ChrisDevOpsOrg/bookings/internal/render"
 	"net/http"
 )
@@ -30,10 +31,15 @@ func NewHandlers(repo *Repository) {
 // (m *Repository) is the function receiver, this receiver have access to everything inside repository
 // which happens to be application config
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.tmpl")
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 // About is the about page handler
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.tmpl")
+	stringMap := map[string]string{
+		"test": "Hello Again",
+	}
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
