@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 const portNumber = ":8080"
@@ -31,32 +33,60 @@ func About(w http.ResponseWriter, r *http.Request) {
 }
 
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// check if the template in the cache
-	_, inMap := tc[tmpl]
-	if !inMap {
-		log.Println("template cache not found")
-		// create template cache
-		CreateTemplateCache(tmpl)
+	// call CreateTemplateCache function to create template cache
+	tc, err := CreateTemplateCache()
+	if err != nil {
+		log.Fatal("failed to create template cache")
 	}
 
-	t := tc[tmpl]
-	fmt.Println("use template cache")
-	t.Execute(w, nil)
-}
-
-// CreateTemplateCache create a template cache
-var tc = map[string]*template.Template{}
-var err error
-
-func CreateTemplateCache(tmpl string) {
-	templates := []string{
-		fmt.Sprintf("./templates/%s", tmpl),
-		"./templates/base.layout.tmpl",
+	// get requested template from cache
+	t, ok := tc[tmpl]
+	if !ok {
+		log.Fatal("cannot find template in cache", err)
 	}
 
-	tc[tmpl], err = template.ParseFiles(templates...)
+	buf := new(bytes.Buffer)
+
+	err = t.Execute(buf, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// render template
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func CreateTemplateCache() (map[string]*template.Template, error) {
+	templateCache := map[string]*template.Template{}
+
+	// get all the files named *.page.tmpl from ./templates
+	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	if err != nil {
+		return templateCache, err
+	}
+
+	// range through all files ending with *.page.tmpl
+	for _, page := range pages {
+		name := filepath.Base(page)
+		ts, err := template.New(name).ParseFiles(page)
+		if err != nil {
+			return templateCache, err
+		}
+
+		// get all layout templates
+		matches, err := filepath.Glob("./templates/*.layout.tmpl")
+		if err != nil {
+			return templateCache, err
+		}
+		if len(matches) > 0 {
+			ts, err = ts.ParseGlob("./templates/*.layout.tmpl")
+		}
+
+		templateCache[name] = ts
+	}
+
+	return templateCache, nil
 }
