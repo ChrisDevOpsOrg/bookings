@@ -21,6 +21,7 @@ func main() {
 	}
 
 	app.TemplateCache = tc
+	app.UseCache = false
 
 	render.NewTemplate(&app)
 
