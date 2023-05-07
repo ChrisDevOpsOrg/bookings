@@ -2,28 +2,33 @@ package render
 
 import (
 	"bytes"
+	"github.com/ChrisDevOpsOrg/bookings/internal/config"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
 
+var app *config.AppConfig
+
+// NewTemplate sets the config for the template package
+func NewTemplate(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// call CreateTemplateCache function to create template cache
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal("failed to create template cache")
-	}
+	// get template cache from the app config
+	tc := app.TemplateCache
 
 	// get requested template from cache
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal("cannot find template in cache", err)
+		log.Fatal("cannot find template in cache")
 	}
 
 	buf := new(bytes.Buffer)
 
-	err = t.Execute(buf, nil)
+	err := t.Execute(buf, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
