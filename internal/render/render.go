@@ -1,36 +1,12 @@
-package main
+package render
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
-
-const portNumber = ":8080"
-
-func main() {
-
-	http.HandleFunc("/", Home)
-	http.HandleFunc("/about", About)
-
-	fmt.Println(fmt.Sprintf("application start listening on %s", portNumber))
-
-	err := http.ListenAndServe(portNumber, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func Home(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "home.page.tmpl")
-}
-
-func About(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "about.page.tmpl")
-}
 
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	// call CreateTemplateCache function to create template cache
