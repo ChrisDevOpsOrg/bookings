@@ -14,12 +14,16 @@ func routes(app *config.AppConfig) http.Handler {
 	// middleware allows you to process a request as it comes into you Web application
 	// and perform some action on it.
 	mux.Use(middleware.Recoverer)
-	mux.Use(WriteToConsole)
 	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+	mux.Get("/generals-quarters", handlers.Repo.Generals)
+	mux.Get("/majors-suite", handlers.Repo.Majors)
+	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Get("/make-reservation", handlers.Repo.Reservation)
+	mux.Get("/contact", handlers.Repo.Contact)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
