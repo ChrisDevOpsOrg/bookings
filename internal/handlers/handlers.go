@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ChrisDevOpsOrg/bookings/internal/config"
 	"github.com/ChrisDevOpsOrg/bookings/internal/models"
 	"github.com/ChrisDevOpsOrg/bookings/internal/render"
+	"log"
 	"net/http"
 )
 
@@ -83,6 +85,32 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(fmt.Sprintf("Start date is %s and end date is %s", start, end)))
 }
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message""`
+}
+
+// AvailabilityJSON handles request for availability and send JSON response
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      false,
+		Message: "Availability",
+	}
+
+	out, err := json.MarshalIndent(resp, "", "    ")
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println(string(out))
+
+	// Include a header that informs the browser about the expected response type
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+}
+
+// To test http://localhost:8080/search-availability-json
 
 // Contact render the contact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {

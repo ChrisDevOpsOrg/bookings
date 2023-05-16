@@ -9,7 +9,7 @@
             <h1 class="text-center mt-5">Search for Availability</h1>
 
             <form class="row needs-validation" action="" method="Post" novalidate>
-               <input class="text" name="csrf_token" value="{{ .CSRFToken }}">
+               <input class="d-lg-none" name="csrf_token" value="{{.CSRFToken}}">
                <div class="row" id="reservation-dates">
                   <div class="col-md-6">
                      <label for="start_date">Starting Date</label>
