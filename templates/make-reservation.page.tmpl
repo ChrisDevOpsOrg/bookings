@@ -4,37 +4,50 @@
   <div class="container">
     <div class="col">
       <h1>Make a Reservation</h1>
-      <form class="row g-3 needs-validation" novalidate>
+      <p><strong>Reservation Details</strong></p>
 
+      {{$res := index .Data "reservation"}}
+
+{{/*      class="row g-3 needs-validation"  enable validation*/}}
+      <form action="/make-reservation" method="post" class="" novalidate>
+        <input class="d-lg-none" name="csrf_token" value="{{.CSRFToken}}">
         <div class="mb-3">
           <label for="first_name" class="form-label">First name</label>
-          <input type="text" class="form-control" id="first_name"  required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
+            {{with .Form.Errors.Get "first_name"}}
+              <label class="text-danger">{{.}}</label>
+            {{end}}
+          <input class="form-control {{with .Form.Errors.Get "first_name"}} is-invalid {{end}}"
+                 id="first_name" autocomplete="off" type="text"
+                 name="first_name", value="{{$res.FirstName}}" required>
         </div>
         <div class="mb-3">
           <label for="last_name" class="form-label">Last name</label>
-          <input type="text" class="form-control" id="last_name"  required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
+          {{with .Form.Errors.Get "last_name"}}
+            <label class="text-danger">{{.}}</label>
+          {{end}}
+          <input class="form-control {{with .Form.Errors.Get "last_name"}} is-invalid {{end}}"
+                 id="last_name" autocomplete="off" type="text"
+                 name="last_name" value="{{$res.LastName}}" required>
         </div>
 
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
-          <input type="text" class="form-control" id="email" aria-describedby="emailHelp" required>
-          <!--        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>-->
-          <div class="valid-feedback">
-            Looks good!
-          </div>
+          {{with .Form.Errors.Get "email"}}
+            <label class="text-danger">{{.}}</label>
+          {{end}}
+          <input class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}"
+                 id="email" autocomplete="off" type="text"
+                 name="email" value="{{$res.Email}}" required>
         </div>
         <div class="mb-3">
           <label for="phone" class="form-label">Phone number</label>
-          <input type="text" class="form-control" id="phone"  required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
+          {{with .Form.Errors.Get "phone"}}
+            <label class="text-danger">{{.}}</label>
+          {{end}}
+          <input class="form-control {{with .Form.Errors.Get "phone"}} is-invalid {{end}}"
+                 id="phone" autocomplete="off" type="text"
+                 name="phone" value="{{$res.Phone}}" required>
+
         </div>
         <div class="col">
           <button type="submit" class="btn btn-primary">Make Reservation</button>
